@@ -98,14 +98,17 @@ function App() {
   });
 
   return (
-    <div className="container">
-      <div className="App">
-        <div className="background"></div>
-        <div className="App__counter">Todos Updated Count: {editedCount}</div>
+    <div className="App">
+      <div className="background">
         <div className="App__header">
-          <h1>Todo: Redux vs RTK</h1>
+          <div className="App__header__title">
+            <h1>Todo!</h1>
+            <p>feat. Redux Toolkit</p>
+          </div>
           <form onSubmit={handleTodoFormSubmit}>
-            <label htmlFor="new-todo">Add new</label>
+            <label className="sr-only" htmlFor="new-todo">
+              Add new
+            </label>
             <input
               onChange={handleNewInputChange}
               id="new-todo"
@@ -114,57 +117,62 @@ function App() {
             <button>Create</button>
           </form>
         </div>
-        <div className="App__body">
-          <ul className="App__list">
-            <h2>My Todos</h2>
-            {todos.map((todo, i) => (
-              <li
-                key={todo.id}
-                onClick={handleTodoClick(todo.id)}
-                className={`${todo.isComplete ? 'complete' : ''} ${
-                  todo.id === selectedTodoId ? 'active' : ''
+      </div>
+      <div className="App__body">
+        <ul className="App__list">
+          <h2 className="sr-only">My Todos</h2>
+          {todos.map((todo, i) => (
+            <li
+              key={todo.id}
+              onClick={handleTodoClick(todo.id)}
+              className={`${todo.isComplete ? 'complete' : ''} ${
+                todo.id === selectedTodoId ? 'active' : ''
+              }`}
+            >
+              <span className="list-number sr-only">{i + 1}</span> {todo.desc}
+            </li>
+          ))}
+        </ul>
+        <div className="App__todo-info">
+          <h2>Selected Todo</h2>
+          {selectedTodo === null ? (
+            <span className="empty-state">No Todo Selected</span>
+          ) : !isEditMode ? (
+            <>
+              <span
+                className={`todo-desc ${
+                  selectedTodo.isComplete ? 'complete' : ''
                 }`}
               >
-                <span className="list-number">{i + 1}</span> {todo.desc}
-              </li>
-            ))}
-          </ul>
-          <div className="App__todo-info">
-            <h2>Selected Todo</h2>
-            {selectedTodo === null ? (
-              <span className="empty-state">No Todo Selected</span>
-            ) : !isEditMode ? (
-              <>
-                <span
-                  className={`todo-desc ${
-                    selectedTodo.isComplete ? 'complete' : ''
-                  }`}
-                >
-                  {selectedTodo.desc}
-                </span>
-                <div className="todo-actions">
-                  <button onClick={handleEditClick}>Edit</button>
-                  <button onClick={handleToggleClick}>Toggle</button>
-                  <button onClick={handleDeleteClick}>Delete</button>
-                </div>
-              </>
-            ) : (
-              <form onSubmit={handleEditFormSubmit}>
-                <label htmlFor="edit-todo">Edit</label>
-                <input
-                  ref={editInput}
-                  onChange={handleEditInputChange}
-                  value={editTodoInput}
-                />
-                <button>Update</button>
-                <button type="button" onClick={handleCancelEditClick}>
-                  Cancel
-                </button>
-              </form>
-            )}
-          </div>
+                {selectedTodo.desc}
+              </span>
+              <div className="todo-actions">
+                <button onClick={handleEditClick}>Edit</button>
+                <button onClick={handleToggleClick}>Toggle</button>
+                <button onClick={handleDeleteClick}>Delete</button>
+              </div>
+            </>
+          ) : (
+            <form onSubmit={handleEditFormSubmit}>
+              <label htmlFor="edit-todo" className="sr-only">
+                Edit
+              </label>
+              <input
+                ref={editInput}
+                onChange={handleEditInputChange}
+                value={editTodoInput}
+              />
+              <button>Update</button>
+              <button type="button" onClick={handleCancelEditClick}>
+                Cancel
+              </button>
+            </form>
+          )}
         </div>
       </div>
+      <footer className="App__counter">
+        Todos Updated Count: {editedCount}
+      </footer>
     </div>
   );
 }
