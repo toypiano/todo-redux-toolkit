@@ -22,6 +22,7 @@ const todos = [
 
 function App() {
   const selectedTodo = todos[1];
+  const editedCount = 0;
   const [isEditMode, setIdEditMode] = useState<boolean>(false);
 
   return (
@@ -32,11 +33,11 @@ function App() {
             <h1>Todo!</h1>
             <p>feat. Redux Toolkit</p>
           </div>
-          <form>
+          <form onSubmit={handleTodoFormSubmit}>
             <label htmlFor="new-todo" className="sr-only">
               Add new
             </label>
-            <input type="text" id="new-todo" autoFocus={true} />
+            <input onChange={handleTodoInputChange} type="text" id="new-todo" autoFocus={true} />
             <button>Create</button>
           </form>
         </div>
@@ -47,6 +48,7 @@ function App() {
           {todos.map((todo, i) => (
             <li
               key={todo.id}
+              onClick={handleTodoClick.bind(null, todo.id)}
               className={`${todo.isComplete ? 'complete' : ''}`}
             >
               <span className="list-number sr-only">{i + 1}</span>
@@ -68,25 +70,25 @@ function App() {
                 {selectedTodo.desc}
               </span>
               <div className="todo-actions">
-                <button>Edit</button>
-                <button>Toggle</button>
-                <button>Delete</button>
+                <button onClick={handleEditClick}>Edit</button>
+                <button onClick={handleToggleClick}>Toggle</button>
+                <button onClick={handleDeleteClick}>Delete</button>
               </div>
             </>
           ) : (
-            <form>
+            <form onSubmit={handleEditFormSubmit}>
               <label htmlFor="edit-todo" className="sr-only">
                 Edit
               </label>
-              <input type="text" />
+              <input onChange={handleEditInputChange}>
               <button>Update</button>
-              <button type="button">Cancel</button>
+              <button onClick={handleCancelEditClick} type="button">Cancel</button>
             </form>
           )}
         </div>
       </div>
       <footer className="App__counter">
-        <p>Todos Updated Count: {0}</p>
+        <p>Todos Updated Count: {editedCount}</p>
       </footer>
     </div>
   );
