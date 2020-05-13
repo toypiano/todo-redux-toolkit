@@ -36,7 +36,8 @@ function App() {
   const editedCount = useSelector((state: State) => state.counter);
 
   const dispatch = useDispatch();
-
+  // selectedTodo depends 100% on other states (selectedTodoId & todos)
+  // don't need to create a state
   const selectedTodo =
     (selectedTodoId && todos.find((todo) => todo.id === selectedTodoId)) ||
     null;
