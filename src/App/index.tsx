@@ -37,7 +37,12 @@ function App() {
             <label htmlFor="new-todo" className="sr-only">
               Add new
             </label>
-            <input onChange={handleTodoInputChange} type="text" id="new-todo" autoFocus={true} />
+            <input
+              onChange={handleTodoInputChange}
+              type="text"
+              id="new-todo"
+              autoFocus={true}
+            />
             <button>Create</button>
           </form>
         </div>
@@ -80,9 +85,11 @@ function App() {
               <label htmlFor="edit-todo" className="sr-only">
                 Edit
               </label>
-              <input onChange={handleEditInputChange}>
+              <input onChange={handleEditInputChange} />
               <button>Update</button>
-              <button onClick={handleCancelEditClick} type="button">Cancel</button>
+              <button onClick={handleCancelEditClick} type="button">
+                Cancel
+              </button>
             </form>
           )}
         </div>
