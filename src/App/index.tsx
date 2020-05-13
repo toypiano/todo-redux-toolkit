@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { v1 as uuid } from 'uuid';
 import './App.scss';
 
@@ -24,6 +24,22 @@ function App() {
   const selectedTodo = todos[1];
   const editedCount = 0;
   const [isEditMode, setIdEditMode] = useState<boolean>(false);
+
+  const handleTodoFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+  };
+  const handleTodoInputChange = (e: ChangeEvent<HTMLInputElement>): void => {};
+  const handleTodoClick = (todoId: string) => {
+    console.log(todoId); // TODO check whether event object is passed as todoId
+  };
+  const handleEditClick = (): void => {};
+  const handleToggleClick = (): void => {};
+  const handleDeleteClick = (): void => {};
+  const handleEditFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+  };
+  const handleEditInputChange = (e: ChangeEvent<HTMLInputElement>): void => {};
+  const handleCancelEditClick = (): void => {};
 
   return (
     <div className="App">
