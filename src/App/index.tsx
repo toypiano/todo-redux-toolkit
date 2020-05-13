@@ -1,110 +1,28 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  ChangeEvent,
-  FormEvent,
-} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-
-import {
-  createTodoActionCreator,
-  editTodoActionCreator,
-  toggleTodoActionCreator,
-  deleteTodoActionCreator,
-  selectTodoActionCreator,
-} from '../redux-original';
-import { State } from '../type';
+import React, { useState } from 'react';
+import { v1 as uuid } from 'uuid';
 import './App.scss';
 
+const todos = [
+  {
+    id: uuid(),
+    desc: 'Learn React',
+    isComplete: true,
+  },
+  {
+    id: uuid(),
+    desc: 'Learn TypeScript',
+    isComplete: false,
+  },
+  {
+    id: uuid(),
+    desc: 'Learn RTK',
+    isComplete: false,
+  },
+];
+
 function App() {
-  const dispatch = useDispatch();
-  const todos = useSelector((state: State) => state.todos);
-  const selectedTodoId = useSelector((state: State) => state.selectedTodo);
-  const editedCount = useSelector((state: State) => state.counter);
-  const [newTodoInput, setNewTodoInput] = useState<string>('');
-  const [editTodoInput, setEditTodoInput] = useState<string>('');
-
-  const [isEditMode, setIsEditMode] = useState<boolean>(false);
-  // To focus the edit input upon edit button click
-  const editInput = useRef<HTMLInputElement>(null);
-  const todoInput = useRef<HTMLInputElement>(null);
-
-  const selectedTodo =
-    (selectedTodoId && todos.find((todo) => todo.id === selectedTodoId)) ||
-    null;
-
-  const handleNewInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setNewTodoInput(e.target.value);
-  };
-
-  const handleEditInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setEditTodoInput(e.target.value);
-  };
-
-  const handleTodoFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    if (!newTodoInput.length) return;
-    dispatch(createTodoActionCreator({ desc: newTodoInput }));
-    setNewTodoInput('');
-    todoInput.current?.focus();
-  };
-
-  const handleTodoClick = (todoId: string) => (): void => {
-    dispatch(selectTodoActionCreator({ id: todoId }));
-  };
-
-  const handleEditClick = (): void => {
-    if (!selectedTodo) return;
-    // init value with prev description value
-    setEditTodoInput(selectedTodo.desc);
-    setIsEditMode(true);
-  };
-
-  const handleToggleClick = (): void => {
-    if (!selectedTodoId || !selectedTodo) return;
-    dispatch(
-      toggleTodoActionCreator({
-        id: selectedTodoId,
-        isComplete: selectedTodo.isComplete,
-      })
-    );
-  };
-
-  const handleDeleteClick = (): void => {
-    if (!selectedTodoId) return;
-    dispatch(deleteTodoActionCreator({ id: selectedTodoId }));
-  };
-
-  const handleEditFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    if (!editTodoInput.length || !selectedTodoId) {
-      handleCancelEditClick();
-      return;
-    }
-
-    dispatch(
-      editTodoActionCreator({
-        id: selectedTodoId,
-        desc: editTodoInput,
-      })
-    );
-    setIsEditMode(false);
-    setEditTodoInput('');
-  };
-
-  const handleCancelEditClick = (): void => {
-    setIsEditMode(false);
-    setEditTodoInput(''); // clear
-  };
-
-  useEffect(() => {}, []);
-  // Focus edit input when in editMode
-  useEffect(() => {
-    if (isEditMode) {
-      editInput.current?.focus();
-    }
-  });
+  const selectedTodo = todos[1];
+  const [isEditMode, setIdEditMode] = useState<boolean>(false);
 
   return (
     <div className="App">
@@ -114,17 +32,11 @@ function App() {
             <h1>Todo!</h1>
             <p>feat. Redux Toolkit</p>
           </div>
-          <form onSubmit={handleTodoFormSubmit}>
-            <label className="sr-only" htmlFor="new-todo">
+          <form>
+            <label htmlFor="new-todo" className="sr-only">
               Add new
             </label>
-            <input
-              ref={todoInput}
-              onChange={handleNewInputChange}
-              id="new-todo"
-              value={newTodoInput}
-              autoFocus={true}
-            />
+            <input type="text" id="new-todo" autoFocus={true} />
             <button>Create</button>
           </form>
         </div>
@@ -135,19 +47,17 @@ function App() {
           {todos.map((todo, i) => (
             <li
               key={todo.id}
-              onClick={handleTodoClick(todo.id)}
-              className={`${todo.isComplete ? 'complete' : ''} ${
-                todo.id === selectedTodoId ? 'active' : ''
-              }`}
+              className={`${todo.isComplete ? 'complete' : ''}`}
             >
-              <span className="list-number sr-only">{i + 1}</span> {todo.desc}
+              <span className="list-number sr-only">{i + 1}</span>
+              {todo.desc}
             </li>
           ))}
         </ul>
         <div className="App__todo-info">
           <h2>Selected Todo</h2>
           {selectedTodo === null ? (
-            <span className="empty-state">No Todo Selected</span>
+            <div className="empty-state">No Todo Selected</div>
           ) : !isEditMode ? (
             <>
               <span
@@ -158,31 +68,25 @@ function App() {
                 {selectedTodo.desc}
               </span>
               <div className="todo-actions">
-                <button onClick={handleEditClick}>Edit</button>
-                <button onClick={handleToggleClick}>Toggle</button>
-                <button onClick={handleDeleteClick}>Delete</button>
+                <button>Edit</button>
+                <button>Toggle</button>
+                <button>Delete</button>
               </div>
             </>
           ) : (
-            <form onSubmit={handleEditFormSubmit}>
+            <form>
               <label htmlFor="edit-todo" className="sr-only">
                 Edit
               </label>
-              <input
-                ref={editInput}
-                onChange={handleEditInputChange}
-                value={editTodoInput}
-              />
+              <input type="text" />
               <button>Update</button>
-              <button type="button" onClick={handleCancelEditClick}>
-                Cancel
-              </button>
+              <button type="button">Cancel</button>
             </form>
           )}
         </div>
       </div>
       <footer className="App__counter">
-        <p>Todos Updated Count: {editedCount}</p>
+        <p>Todos Updated Count: {0}</p>
       </footer>
     </div>
   );
