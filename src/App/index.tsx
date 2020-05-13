@@ -15,7 +15,7 @@ import {
   toggleTodo,
   editTodo,
   deleteTodo,
-} from '../redux-original';
+} from '../redux-toolkit';
 import { State } from '../type';
 import './App.scss';
 

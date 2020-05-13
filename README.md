@@ -53,3 +53,5 @@ A fork from Justin Kim's [Deep Dive into Redux Toolkit with React - Complete Gui
 
 - add type guards for the arguments required by action creators
 - set local state where appropriate (clear form, spinners, etc...)
+
+## Redux Toolkit
