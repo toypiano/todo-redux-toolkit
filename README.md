@@ -4,6 +4,7 @@ A fork from Justin Kim's [Deep Dive into Redux Toolkit with React - Complete Gui
 
 <img src="./screenshots/iphonePlus.png" width="250">
 <img src="./screenshots/iphoneX.png" width="250">
+<img src="./screenshots/iPad.png" width="250">
 
 ## New
 

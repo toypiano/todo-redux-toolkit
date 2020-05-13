@@ -221,6 +221,7 @@ body {
         text-decoration: line-through;
         opacity: 0.5;
       }
+      margin: 0.5em 0;
       cursor: pointer;
       position: relative;
       &:hover {
@@ -247,7 +248,7 @@ body {
     grid-column: 2;
     @include media-lg {
       grid-column: 3;
-      align-self: start;
+      align-self: center;
       font-size: var(--fz-lg);
       margin: 2em;
       justify-self: center;
@@ -358,7 +359,7 @@ body {
       grid-row: 3;
       font-size: var(--fz-sm);
       background: var(--cl-light);
-      height: 5em;
+      height: 10em;
       background-color: transparent;
       color: var(--cl-primary);
     }
