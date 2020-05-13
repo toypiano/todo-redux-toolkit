@@ -21,6 +21,18 @@
   --cl-accent: rgb(218, 63, 179);
 }
 
+@mixin media-lg {
+  @media (min-width: 800px) {
+    @content;
+  }
+}
+
+@mixin media-xl {
+  @media (min-width: 1400px) {
+    @content;
+  }
+}
+
 html {
   box-sizing: border-box;
 }
@@ -41,6 +53,12 @@ input,
 button {
   font: inherit;
   cursor: pointer;
+}
+
+input {
+  &:focus {
+    outline: none;
+  }
 }
 
 .sr-only:not(:focus):not(:active) {
@@ -64,8 +82,13 @@ body {
   margin: 0 auto;
   font-size: 1.2rem;
   position: relative;
+  // App grid layout
+  display: grid;
+  grid-template-rows: 400px 1fr minmax(3em, 10em);
 
-  .background {
+  &__header-container {
+    grid-column: 1 / -1;
+    grid-row: 1 / 2;
     position: relative;
     width: 100vw;
     height: 400px;
@@ -84,7 +107,7 @@ body {
       filter: grayscale(100%) brightness(0.8);
     }
   }
-
+  // Header =====================================
   &__header {
     background-color: rgba(white, 0.3);
     backdrop-filter: grayscale(90%);
@@ -92,19 +115,22 @@ body {
     width: 100%;
     height: 100%;
 
+    // App title and subtitle ====================
     &__title {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+
       h1 {
         font-size: var(--fz-title);
         font-weight: var(--fw-black);
         text-align: center;
         color: var(--cl-light);
-        // filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.5));
         grid-column: 1 / -1;
+        text-shadow: 3px 1px rgba(0, 0, 0, 0.1);
       }
+      // Subtitle: feat. Redux toolkit
       p {
-        grid-column: 4;
+        justify-self: center;
+        transform: translateX(10vw);
         width: max-content;
         display: inline-block;
         font-size: var(--fz-subtitle);
@@ -113,8 +139,9 @@ body {
         font-style: italic;
         background: rgba(0, 0, 0, 0.7);
         padding: 0.2em 0.5em;
-        @media (min-width: 1000px) {
+        @include media-lg() {
           position: absolute;
+          transform: translateX(0);
           top: 1em;
           right: 1em;
         }
@@ -122,13 +149,16 @@ body {
       }
     }
 
+    // Main todo form =====================
     form {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       margin-top: 3em;
+
       input {
         margin: auto;
-        max-width: 100%;
+        width: 90%;
+        max-width: 20em;
         display: block;
         grid-column: 1 / -1;
         border: none;
@@ -137,6 +167,10 @@ body {
         font-size: var(--fz-lg);
       }
       button {
+        min-width: max-content;
+        width: 80%;
+        max-width: 10em;
+        margin: auto;
         grid-column: 3;
         display: block;
         border: none;
@@ -161,20 +195,26 @@ body {
     }
   }
 
+  //Body layout ===========================
   &__body {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: 1fr auto 1fr;
     min-height: 300px;
+    max-width: 1200px;
+    margin: auto;
   }
 
+  // Todo list ================================
   &__list {
-    grid-column: 2 / -1;
-    grid-row: 1 / 2;
-    @media (min-width: 1000px) {
-      grid-column: 2 / 4;
+    grid-column: 2;
+
+    justify-self: center;
+    @include media-lg {
+      grid-column: 1;
       font-size: var(--fz-subtitle);
       margin: 2em;
       padding: 1em;
+      justify-self: center;
     }
     li {
       &.complete {
@@ -186,109 +226,140 @@ body {
       &:hover {
         color: var(--cl-accent);
       }
-      &:active {
-        animation: rise 500ms linear;
+      &.active {
+        animation: rise 1s forwards cubic-bezier(0, 0.93, 0.58, 1);
         @keyframes rise {
           0% {
-            opacity: 1;
-            bottom: 0;
+            opacity: 0;
+            left: 0;
           }
           100% {
-            opacity: 0;
-            bottom: 1em;
+            opacity: 0.8;
+            left: 2em;
           }
         }
       }
     }
   }
-}
-
-.App__todo-info {
-  @media (min-width: 1000px) {
-    grid-row: 1;
-    grid-column: 4 / -1;
-    font-size: var(--fz-lg);
-    margin: 2em;
-  }
-  grid-row: 2;
-  grid-column: 1 / -1;
-  margin: 1.5em auto;
-  display: grid;
-  justify-items: center;
-  h2 {
-    font-weight: normal;
-    font-size: var(--fz-md);
-    color: var(--cl-gray-dark);
-    margin: 0;
-    padding: 0.5em 0;
-    border-bottom: 4px solid var(--cl-accent);
-  }
-  .todo-desc,
-  .empty-state {
-    font-weight: bold;
-    font-size: var(--fz-lg);
-    padding: 1em;
-    min-height: 1em;
-  }
-  .empty-state {
-    opacity: 0.5;
-  }
-
-  button {
-    border: none;
-    background: transparent;
-    transition: all 250ms ease;
-    &:hover {
-      color: var(--cl-accent);
+  // Selected todo info & Actions ================
+  &__todo-info {
+    grid-column: 2;
+    @include media-lg {
+      grid-column: 3;
+      align-self: start;
+      font-size: var(--fz-lg);
+      margin: 2em;
+      justify-self: center;
     }
-  }
-
-  form {
-    margin-top: 1em;
-
+    margin: 1.5em auto;
     display: grid;
-    gap: 1em;
-    grid-template-columns: repeat(2, 1fr);
-    animation: appear 500ms ease;
-    @keyframes appear {
-      0% {
-        opacity: 0;
-      }
+    justify-items: center;
+    h2 {
+      font-weight: normal;
+      font-size: var(--fz-md);
+      color: var(--cl-gray-dark);
+      margin: 0;
+      padding: 0.5em 0;
+      border-bottom: 4px solid var(--cl-accent);
+    }
 
-      100% {
-        opacity: 1;
+    // Selected todo display ===============
+    .todo-desc,
+    .empty-state {
+      font-weight: bold;
+      font-size: var(--fz-lg);
+      padding: 1em;
+      min-height: 1em;
+    }
+    .empty-state {
+      opacity: 0.5;
+    }
+
+    // Todo Actions =========================
+    .todo-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 0.5em;
+    }
+    // These button rules apply both for actions and form
+    button {
+      border: none;
+      background: transparent;
+      transition: all 250ms ease;
+      &:hover {
+        color: var(--cl-accent);
       }
     }
-    input {
-      width: 100%;
-      border: 1px solid var(--cl-gray);
-      grid-column: 1 / -1;
-      padding: 0.5em 1.5em;
-      animation: scroll-out 500ms cubic-bezier(0.58, -0.25, 0.42, 1.26);
-      animation-fill-mode: forwards;
-      @keyframes scroll-out {
+    // Edit todo form =========================
+    form {
+      margin-top: 1em;
+
+      display: grid;
+      gap: 1em;
+      grid-template-columns: repeat(2, 1fr);
+      align-self: start;
+      animation: appear 500ms ease;
+      @keyframes appear {
         0% {
-          width: 0;
-          border: 1px solid var(--cl-gray);
+          opacity: 0;
         }
+
         100% {
-          width: 100%;
-          border: 1px solid var(--cl-accent);
+          opacity: 1;
+        }
+      }
+      input {
+        width: 100%;
+        border: 1px solid var(--cl-gray);
+        grid-column: 1 / -1;
+        padding: 0.5em 1.5em;
+        animation: scroll-out 500ms cubic-bezier(0.58, -0.25, 0.42, 1.26);
+        animation-fill-mode: forwards;
+        @keyframes scroll-out {
+          0% {
+            width: 0;
+            border: 1px solid var(--cl-gray);
+          }
+          100% {
+            width: 100%;
+            border: 1px solid var(--cl-accent);
+          }
+        }
+        &:focus {
+          outline: none;
         }
       }
     }
   }
-}
 
-.todo-actions {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 0.5em;
-}
-
-footer {
-  text-align: center;
-  opacity: 0.6;
-  font-size: var(--fz-sm);
-  margin: 2em;
+  // Footer : Todos updated count ===================
+  &__counter {
+    --height: 1.5em;
+    transition: bottom 300ms ease-in-out;
+    //TODO: Implement sliding footer - show only on scroll-up
+    &--slide-down {
+      bottom: calc(-1 * var(--height));
+    }
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    height: var(--height);
+    background: var(--cl-primary);
+    color: var(--cl-light);
+    display: grid;
+    place-items: center;
+    font-size: var(--fz-sm);
+    p {
+      text-align: center;
+    }
+    @media (min-height: 1000px) {
+      grid-row: 3;
+      font-size: var(--fz-sm);
+      background: var(--cl-light);
+      height: 5em;
+      background-color: transparent;
+      color: var(--cl-primary);
+    }
+  }
 }

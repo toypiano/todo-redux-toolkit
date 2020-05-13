@@ -24,8 +24,11 @@ function App() {
   const editedCount = useSelector((state: State) => state.counter);
   const [newTodoInput, setNewTodoInput] = useState<string>('');
   const [editTodoInput, setEditTodoInput] = useState<string>('');
+
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  // To focus the edit input upon edit button click
   const editInput = useRef<HTMLInputElement>(null);
+  const todoInput = useRef<HTMLInputElement>(null);
 
   const selectedTodo =
     (selectedTodoId && todos.find((todo) => todo.id === selectedTodoId)) ||
@@ -44,6 +47,7 @@ function App() {
     if (!newTodoInput.length) return;
     dispatch(createTodoActionCreator({ desc: newTodoInput }));
     setNewTodoInput('');
+    todoInput.current?.focus();
   };
 
   const handleTodoClick = (todoId: string) => (): void => {
@@ -80,7 +84,10 @@ function App() {
     }
 
     dispatch(
-      editTodoActionCreator({ id: selectedTodoId, desc: editTodoInput })
+      editTodoActionCreator({
+        id: selectedTodoId,
+        desc: editTodoInput,
+      })
     );
     setIsEditMode(false);
     setEditTodoInput('');
@@ -91,6 +98,8 @@ function App() {
     setEditTodoInput(''); // clear
   };
 
+  useEffect(() => {}, []);
+  // Focus edit input when in editMode
   useEffect(() => {
     if (isEditMode) {
       editInput.current?.focus();
@@ -99,7 +108,7 @@ function App() {
 
   return (
     <div className="App">
-      <div className="background">
+      <div className="App__header-container">
         <div className="App__header">
           <div className="App__header__title">
             <h1>Todo!</h1>
@@ -110,9 +119,11 @@ function App() {
               Add new
             </label>
             <input
+              ref={todoInput}
               onChange={handleNewInputChange}
               id="new-todo"
               value={newTodoInput}
+              autoFocus={true}
             />
             <button>Create</button>
           </form>
@@ -171,7 +182,7 @@ function App() {
         </div>
       </div>
       <footer className="App__counter">
-        Todos Updated Count: {editedCount}
+        <p>Todos Updated Count: {editedCount}</p>
       </footer>
     </div>
   );
