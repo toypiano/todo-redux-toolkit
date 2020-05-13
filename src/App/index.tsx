@@ -5,35 +5,37 @@ import React, {
   useRef,
   useEffect,
 } from 'react';
-import { v1 as uuid } from 'uuid';
+
+// import redux hooks - useSelector gives you the piece of state
+import { useSelector, useDispatch } from 'react-redux';
+// import action creators
+import {
+  createTodo,
+  selectTodo,
+  toggleTodo,
+  editTodo,
+  deleteTodo,
+} from '../redux-original';
+import { State } from '../type';
 import './App.scss';
 
-const todos = [
-  {
-    id: uuid(),
-    desc: 'Learn React',
-    isComplete: true,
-  },
-  {
-    id: uuid(),
-    desc: 'Learn TypeScript',
-    isComplete: false,
-  },
-  {
-    id: uuid(),
-    desc: 'Learn RTK',
-    isComplete: false,
-  },
-];
-const selectedTodoId = todos[1].id;
-const editedCount = 0;
-
 function App() {
+  // input binding with local state
   const [newTodoInput, setNewTodoInput] = useState<string>('');
   const [editTodoInput, setEditTodoInput] = useState<string>('');
+  // edit mode switch
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  // ref for focusing inputs
   const editInputRef = useRef<HTMLInputElement>(null);
   const newTodoInputRef = useRef<HTMLInputElement>(null);
+
+  // Use pieces of state from Redux store
+  const todos = useSelector((state: State) => state.todos);
+  const selectedTodoId = useSelector((state: State) => state.selectedTodoId);
+  // you can rename the variable as you see fit!
+  const editedCount = useSelector((state: State) => state.counter);
+
+  const dispatch = useDispatch();
 
   const selectedTodo =
     (selectedTodoId && todos.find((todo) => todo.id === selectedTodoId)) ||
@@ -41,6 +43,8 @@ function App() {
 
   const handleTodoFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+    if (!newTodoInput.length) return;
+    dispatch(createTodo({ desc: newTodoInput }));
     setNewTodoInput('');
     newTodoInputRef.current?.focus();
   };
@@ -48,8 +52,8 @@ function App() {
   const handleTodoInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setNewTodoInput(e.target.value);
   };
-  const handleTodoClick = (todoId: string) => {
-    console.log(todoId); // TODO check whether event object is passed as todoId
+  const handleTodoClick = (todoId: string): void => {
+    dispatch(selectTodo({ id: todoId }));
   };
   const handleEditClick = (): void => {
     // if no todo selected, do nothing
@@ -69,18 +73,25 @@ function App() {
   }, [isEditMode]);
 
   const handleToggleClick = (): void => {
-    // here, we need to check if the selected todo exists both in the store and in the component
-    // because it affects how app's rendered to the screen
-    if (!selectedTodoId || !selectedTodo) return;
+    // type guard needed for the ones you're passing into the action creator
+    if (!selectedTodoId) return;
+    dispatch(toggleTodo({ id: selectedTodoId }));
   };
   const handleDeleteClick = (): void => {
-    // If selectedTodoId doesn't exist at the time of clicking 'delete'
-    // we don't have to check 'selectedTodo' because it's computed in this component
-    // we only care about deleting that todo in the store
     if (!selectedTodoId) return;
+    dispatch(deleteTodo({ id: selectedTodoId }));
   };
   const handleEditFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+    if (!editTodoInput.length || !selectedTodoId) {
+      handleCancelEditClick();
+      return;
+    }
+    dispatch(editTodo({ id: selectedTodoId, desc: editTodoInput }));
+    // Even though these are exactly what 'handleCancelEditClick' does,
+    // it's semantically different group of actions, so we're imperatively telling what to do.
+    setIsEditMode(false);
+    setEditTodoInput('');
   };
   const handleEditInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setEditTodoInput(e.target.value);
