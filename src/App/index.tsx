@@ -1,4 +1,10 @@
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import React, {
+  useState,
+  FormEvent,
+  ChangeEvent,
+  useRef,
+  useEffect,
+} from 'react';
 import { v1 as uuid } from 'uuid';
 import './App.scss';
 
@@ -19,27 +25,71 @@ const todos = [
     isComplete: false,
   },
 ];
+const selectedTodoId = todos[1].id;
+const editedCount = 0;
 
 function App() {
-  const selectedTodo = todos[1];
-  const editedCount = 0;
-  const [isEditMode, setIdEditMode] = useState<boolean>(false);
+  const [newTodoInput, setNewTodoInput] = useState<string>('');
+  const [editTodoInput, setEditTodoInput] = useState<string>('');
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const editInputRef = useRef<HTMLInputElement>(null);
+  const newTodoInputRef = useRef<HTMLInputElement>(null);
+
+  const selectedTodo =
+    (selectedTodoId && todos.find((todo) => todo.id === selectedTodoId)) ||
+    null;
 
   const handleTodoFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+    setNewTodoInput('');
+    newTodoInputRef.current?.focus();
   };
-  const handleTodoInputChange = (e: ChangeEvent<HTMLInputElement>): void => {};
+
+  const handleTodoInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setNewTodoInput(e.target.value);
+  };
   const handleTodoClick = (todoId: string) => {
     console.log(todoId); // TODO check whether event object is passed as todoId
   };
-  const handleEditClick = (): void => {};
-  const handleToggleClick = (): void => {};
-  const handleDeleteClick = (): void => {};
+  const handleEditClick = (): void => {
+    // if no todo selected, do nothing
+    if (!selectedTodo) return;
+    // initialize with selected todo.
+    setEditTodoInput(selectedTodo.desc);
+    setIsEditMode(true);
+    // you can't focus ref in here before editInput will mount in next render
+    // after editMode is turned on.
+  };
+  // focus edit input when edit mode is turned on
+  useEffect(() => {
+    if (isEditMode) {
+      // this will run after the editInput gets mounted
+      editInputRef.current?.focus();
+    }
+  }, [isEditMode]);
+
+  const handleToggleClick = (): void => {
+    // here, we need to check if the selected todo exists both in the store and in the component
+    // because it affects how app's rendered to the screen
+    if (!selectedTodoId || !selectedTodo) return;
+  };
+  const handleDeleteClick = (): void => {
+    // If selectedTodoId doesn't exist at the time of clicking 'delete'
+    // we don't have to check 'selectedTodo' because it's computed in this component
+    // we only care about deleting that todo in the store
+    if (!selectedTodoId) return;
+  };
   const handleEditFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
   };
-  const handleEditInputChange = (e: ChangeEvent<HTMLInputElement>): void => {};
-  const handleCancelEditClick = (): void => {};
+  const handleEditInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setEditTodoInput(e.target.value);
+  };
+  const handleCancelEditClick = (): void => {
+    setIsEditMode(false);
+    // clear edit todo input
+    setEditTodoInput('');
+  };
 
   return (
     <div className="App">
@@ -55,9 +105,11 @@ function App() {
             </label>
             <input
               onChange={handleTodoInputChange}
+              value={newTodoInput}
               type="text"
               id="new-todo"
               autoFocus={true}
+              ref={newTodoInputRef}
             />
             <button>Create</button>
           </form>
@@ -70,7 +122,9 @@ function App() {
             <li
               key={todo.id}
               onClick={handleTodoClick.bind(null, todo.id)}
-              className={`${todo.isComplete ? 'complete' : ''}`}
+              className={`${todo.isComplete ? 'complete' : ''} ${
+                todo.id === selectedTodoId ? 'active' : ''
+              }`}
             >
               <span className="list-number sr-only">{i + 1}</span>
               {todo.desc}
@@ -101,7 +155,11 @@ function App() {
               <label htmlFor="edit-todo" className="sr-only">
                 Edit
               </label>
-              <input onChange={handleEditInputChange} />
+              <input
+                ref={editInputRef}
+                onChange={handleEditInputChange}
+                value={editTodoInput}
+              />
               <button>Update</button>
               <button onClick={handleCancelEditClick} type="button">
                 Cancel
