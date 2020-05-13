@@ -2,7 +2,7 @@
 
 A fork from Justin Kim's [Deep Dive into Redux Toolkit with React - Complete Guide](https://www.youtube.com/watch?v=9lCmbth63k0)
 
-<img src="./screenshots/todo-1.png" width="250">
+<img src="./screenshots/screenshot.png" width="300">
 
 ## New
 
