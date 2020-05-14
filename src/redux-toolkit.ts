@@ -89,7 +89,7 @@ const counterSlice = createSlice({
   name: 'counter',
   initialState: 0,
   reducers: {},
-  // use action type used in other reducers here
+  // receive action defined in other reducers here
   extraReducers: {
     [todosSlice.actions.create.type]: (state) => state + 1,
     [todosSlice.actions.edit.type]: (state) => state + 1,
