@@ -2,9 +2,20 @@
 
 A fork from Justin Kim's [Deep Dive into Redux Toolkit with React - Complete Guide](https://www.youtube.com/watch?v=9lCmbth63k0)
 
-<img src="./screenshots/iphonePlus.png" width="250">
-<img src="./screenshots/iphoneX.png" width="250">
-<img src="./screenshots/iPad.png" width="250">
+#### Screenshots
+
+<table>
+<tr>
+<td>Mobile 1</td>
+<td>Mobile 2</td>
+<td>Tablet</td>
+</tr>
+<tr>
+<td><img src="./screenshots/iphonePlus.png" width="250"></td>
+<td><img src="./screenshots/iphoneX.png" width="250"></td>
+<td><img src="./screenshots/iPad.png" width="250"></td>
+</tr>
+</table>
 
 ## New
 
