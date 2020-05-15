@@ -338,13 +338,13 @@ body {
   &__counter {
     --height: 1.5em;
     transition: bottom 300ms ease-in-out;
-    //TODO: Implement sliding footer - show only on scroll-up
-    &--slide-down {
-      bottom: calc(-1 * var(--height));
-    }
     position: fixed;
     left: 0;
-    bottom: 0;
+    bottom: calc(-1 * var(--height));
+    &.show {
+      bottom: 0;
+    }
+
     width: 100vw;
     height: var(--height);
     background: var(--cl-primary);

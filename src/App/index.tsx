@@ -18,16 +18,25 @@ import {
 } from '../redux-toolkit';
 import { State } from '../type';
 import './App.scss';
+import useSlidingFooter from './useSlidingFooter';
+
+let renderCount = 0;
 
 function App() {
+  console.log(renderCount++);
+
   // input binding with local state
   const [newTodoInput, setNewTodoInput] = useState<string>('');
   const [editTodoInput, setEditTodoInput] = useState<string>('');
+
   // edit mode switch
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   // ref for focusing inputs
   const editInputRef = useRef<HTMLInputElement>(null);
   const newTodoInputRef = useRef<HTMLInputElement>(null);
+
+  // show/hide footer
+  const isFooterShowing = useSlidingFooter();
 
   // Use pieces of state from Redux store
   const todos = useSelector((state: State) => state.todos);
@@ -180,7 +189,7 @@ function App() {
           )}
         </div>
       </div>
-      <footer className="App__counter">
+      <footer className={`App__counter ${isFooterShowing ? 'show' : ''}`}>
         <p>Todos Updated Count: {editedCount}</p>
       </footer>
     </div>
