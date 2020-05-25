@@ -28,7 +28,7 @@ A fork from Justin Kim's [Deep Dive into Redux Toolkit with React - Complete Gui
 1. Design & markup
 
 - create mock object array to map into a list
-- create switch variables to conditionally render components
+- create variables (boolean) to conditionally render components
 
 2. Create local states (input binding & etc...) & refs (focusing)
 3. Assign empty handlers to UIs. You can add if checks to return out of the handler where appropriate.
