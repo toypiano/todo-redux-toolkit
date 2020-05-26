@@ -20,6 +20,7 @@ A fork from Justin Kim's [Deep Dive into Redux Toolkit with React - Complete Gui
 ## New
 
 - New design - Responsive layout with CSS grid and animated UI
+- Hides footer on scroll-down - with `useScroll` custom hook
 
 ## Workflow Redux vs RTK
 

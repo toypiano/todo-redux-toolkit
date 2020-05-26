@@ -18,7 +18,7 @@ import {
 } from '../redux-toolkit';
 import { State } from '../type';
 import './App.scss';
-import useSlidingFooter from './useSlidingFooter';
+import { useScroll } from './useScroll';
 
 let renderCount = 0;
 
@@ -36,7 +36,7 @@ function App() {
   const newTodoInputRef = useRef<HTMLInputElement>(null);
 
   // show/hide footer
-  const isFooterShowing = useSlidingFooter();
+  const isScrolledUp = useScroll(true, true, 200);
 
   // Use pieces of state from Redux store
   const todos = useSelector((state: State) => state.todos);
@@ -62,9 +62,11 @@ function App() {
   const handleTodoInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setNewTodoInput(e.target.value);
   };
+
   const handleTodoClick = (todoId: string): void => {
     dispatch(selectTodo({ id: todoId }));
   };
+
   const handleEditClick = (): void => {
     // if no todo selected, do nothing
     if (!selectedTodo) return;
@@ -74,6 +76,7 @@ function App() {
     // you can't focus ref in here before editInput will mount in next render
     // after editMode is turned on.
   };
+
   // focus edit input when edit mode is turned on
   useEffect(() => {
     if (isEditMode) {
@@ -87,10 +90,19 @@ function App() {
     if (!selectedTodoId) return;
     dispatch(toggleTodo({ id: selectedTodoId }));
   };
+
+  // update edit input pre-filled value if selectedTodo changed
+  useEffect(() => {
+    if (isEditMode && selectedTodo) {
+      setEditTodoInput(selectedTodo.desc);
+    }
+  }, [isEditMode, selectedTodo]);
+
   const handleDeleteClick = (): void => {
     if (!selectedTodoId) return;
     dispatch(deleteTodo({ id: selectedTodoId }));
   };
+
   const handleEditFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (!editTodoInput.length || !selectedTodoId) {
@@ -103,9 +115,11 @@ function App() {
     setIsEditMode(false);
     setEditTodoInput('');
   };
+
   const handleEditInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setEditTodoInput(e.target.value);
   };
+
   const handleCancelEditClick = (): void => {
     setIsEditMode(false);
     // clear edit todo input
@@ -189,7 +203,7 @@ function App() {
           )}
         </div>
       </div>
-      <footer className={`App__counter ${isFooterShowing ? 'show' : ''}`}>
+      <footer className={`App__counter ${isScrolledUp ? 'show' : ''}`}>
         <p>Todos Updated Count: {editedCount}</p>
       </footer>
     </div>
